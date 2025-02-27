@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <link type="text/css" rel="stylesheet" href="https://www.primefaces.org/showcase/javax.faces.resource/css/layout.css.xhtml?ln=showcase"></link>
+    </h:head>
+
+    <h:body>
+        <h4>Bienvenido #{loginController.usuario.nombre}</h4>
+        <br/>
+        <h:form id="form">
+            <p:growl id="messages" showDetail="false" />
+            <p:toolbar>
+                <p:toolbarGroup>
+                    <p:commandButton value="Nuevo" icon="pi pi-plus" actionListener="#{loginController.openNew()}"
+                                     update=":dialogs:manage-user-content" oncomplete="PF('manageUserDialog').show()"
+                                     styleClass="ui-button-success" style="margin-right: .5rem">
+                        <p:resetInput target=":dialogs:manage-user-content" />
+                    </p:commandButton>
+                    
+                    <p:commandButton id="delete-usuario-button" value="#{ServicioUsuario.deleteUsuario()}"
+                    icon="pi pi-trash"
+                    styleClass="ui-button-danger" disabled="#{!loginController.setSelectedUsuario(selectedUsuario)}" update="@this">
+                    <p:confirm header="Confirmation" message="Delete the selected usuario?"
+                        icon="pi pi-exclamation-triangle" />
+                </p:commandButton>
+                    
+                </p:toolbarGroup>
+            </p:toolbar>
+
+            <div class="card">
+                <p:dataTable id="dt-users" var="usuario" value="#{loginController.listaUsuario}"
+                             rows="10"
+                             paginator="true" paginatorPosition="both"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                             rowsPerPageTemplate="5,10,{ShowAll|'All'}">
+
+                    <p:column headerText="Codigo">
+                        <h:outputText value="#{usuario.id}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{usuario.nombre}" />
+                    </p:column>
+
+                    <p:column headerText="Correo">
+                        <h:outputText value="#{usuario.correo}" />
+                    </p:column>
+
+                    <p:column>
+                        <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-user-content"
+                                         oncomplete="PF('manageUserDialog').show()"
+                                         styleClass="edit-button rounded-button ui-button-success" process="@this">
+                            <f:setPropertyActionListener value="#{usuario}" target="#{loginController.selectedUsuario}" />
+                            <p:resetInput target=":dialogs:manage-user-content" />
+                        </p:commandButton>
+
+                        <p:commandButton id="delete-usuario-button" value="#{id}"
+                                         icon="pi pi-trash" actionListener="#{loginController.deleteUsuario(id)}"
+                                         styleClass="ui-button-danger" update="@this">
+                            <p:confirm header="Confirmation" message="Desea eliminar el Usuario?"
+                                       icon="pi pi-exclamation-triangle" />
+
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+            </div>
+        </h:form>
+        <h:form id="dialogs">
+            <p:dialog header="Detalle del Usuario" showEffect="fade" modal="true" widgetVar="manageUserDialog"
+                      responsive="true">
+                <p:outputPanel id="manage-user-content" class="ui-fluid">
+
+                    <div class="field">
+                        <p:outputLabel for="name">Nombre</p:outputLabel>
+                        <p:inputText id="name" value="#{loginController.selectedUsuario.nombre}" required="true" />
+                    </div>
+
+                    <div class="field">
+                        <p:outputLabel for="email">Correo</p:outputLabel>
+                        <p:inputText id="email" value="#{loginController.selectedUsuario.correo}" required="true" />
+                    </div>
+
+                    <div class="field">
+                        <p:outputLabel for="pass">Clave</p:outputLabel>
+                        <p:password id="pass" value="#{loginController.selectedUsuario.clave}" required="true" />
+                    </div>
+                </p:outputPanel>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Guardar" icon="pi pi-check" actionListener="#{loginController.saveUser}"
+                                     update="manage-user-content" process="manage-user-content @this" />
+
+                    <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('manageUserDialog').hide()" actionListener="#{loginController.limpiar}"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+            <p:confirmDialog widgetVar="deleteUsuarioDialog" showEffect="fade"
+                             message="Desea Eliminar al Usuario?" header="Confirm" severity="warn">
+                <p:commandButton value="Yes" icon="pi pi-check"
+                                 actionListener="#{loginController.deleteUsuario(loginController.selectedUsuario.id)}"
+                                 update="form:dt-users messages"
+                                 oncomplete="PF('deleteUsuarioDialog').hide()" >
+                </p:commandButton>
+
+            </p:confirmDialog>
+
+        </h:form>
+
+    </h:body>
+</html>

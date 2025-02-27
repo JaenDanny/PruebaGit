@@ -1,0 +1,6 @@
+com\ulatina\data\Usuario.class
+com\ulatina\JakartaRestConfiguration.class
+com\ulatina\controller\LoginController.class
+com\ulatina\service\ServicioUsuario.class
+com\ulatina\service\Servicio.class
+com\ulatina\resources\JakartaEE10Resource.class
